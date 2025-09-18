@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRODOFLOW- Smart Productivity Assistant</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0d1117;
+      color: #f0f6fc;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      padding: 20px;
+      background: #161b22;
+      text-align: center;
+      color: #eb7c05;
+    }
+    .container {
+      padding: 20px;
+      flex: 1;
+    }
+    .task-form {
+      margin-bottom: 30px;
+    }
+    input, button, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 6px;
+      background: #21262d;
+      color: #333536;
+    }
+    button {
+      background: #049e20;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #1f8a32;
+    }
+    .task-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .task-card {
+      background: #1c2128;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+
+    /* Override Google search styles */
+    .gcse-search input.gsc-input {
+      background-color: #020917 !important;
+      color: #edf0f4 !important;
+      border: 1px solid #060709 !important;
+    }
+    .gcse-search input.gsc-input:focus {
+      outline: none !important;
+      box-shadow: 0 0 3px #1176e9 !important;
+    }
+    .gcse-search .gsc-search-button-v2 {
+      background-color: #56ec74 !important;
+      border: none !important;
+      color: #0a80f7 !important;
+    }
+  </style>
+  <script async src="https://cse.google.com/cse.js?cx=249aa6a2c982b40ab"></script>
+</head>
+<body>
+
+<header>
+  <h1>Pro-do-flow</h1>
+  <p>Smarter To-Dos with Google-Powered Productivity</p>
+</header>
+
+<div class="container">
+  <section class="task-form">
+    <h2>Add a Task</h2>
+    <input id="task-name" placeholder="Task name" />
+    <input id="task-deadline" type="datetime-local" />
+    <button onclick="addTask()">Add Task</button>
+  </section>
+
+  <section class="task-list" id="task-list"></section>
+
+  <section>
+    <h2>Search for Help or Tips</h2>
+    <div class="gcse-search"></div>
+  </section>
+</div>
+
+<script>
+  const taskList = document.getElementById("task-list");
+  const tasks = [];
+
+  function addTask() {
+    const name = document.getElementById("task-name").value.trim();
+    const deadline = document.getElementById("task-deadline").value;
+    if (!name || !deadline) return;
+
+    tasks.push({ name, deadline });
+    renderTasks();
+    document.getElementById("task-name").value = "";
+    document.getElementById("task-deadline").value = "";
+  }
+
+  function renderTasks() {
+    taskList.innerHTML = "";
+    const now = new Date();
+    tasks.forEach(task => {
+      const due = new Date(task.deadline);
+      const diff = due - now;
+      let status = "🟢 Upcoming";
+      if (diff < 0) status = "🔴 Overdue";
+      else if (diff < 3600000) status = "🟡 Soon";
+      const card = document.createElement("div");
+      card.className = "task-card";
+      card.innerHTML = `
+        <h3>${task.name}</h3>
+        <p>Deadline: ${due.toLocaleDateString()} ${due.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+        <p>Status: ${status}</p>
+      `;
+      taskList.appendChild(card);
+    });
+  }
+</script>
+
+</body>
+</html>
